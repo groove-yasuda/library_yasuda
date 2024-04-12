@@ -1,5 +1,5 @@
 <template>
     <div>
-        <p>全画面ターミナル</p>
+        <p>貸出返却画面</p>
     </div>
 </template>

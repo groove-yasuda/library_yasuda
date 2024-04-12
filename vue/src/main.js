@@ -13,7 +13,16 @@ Vue.use(VueRouter)
 new Vue({
     render: h => h(App),
     vuetify,
-    router
+    router,
+    theme: {
+        options: {
+          customProperties: true,
+        },
+        themes: {
+          light: {
+            drawerWidth: 200,
+          },
+        },
+      },
 }).$mount('#app')
-
 

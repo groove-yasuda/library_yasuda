@@ -53,9 +53,9 @@ export default {
     data() {
         return {
             links: [
-                ['検索', ''],//''にrouter.jsで設定したpathを宣言
-                ['利用者登録編集・削除', ''],
-                ['貸出・返却', ''],
+                ['検索', 'search_process'],//''にrouter.jsで設定したpathを宣言
+                ['利用者登録編集・削除', 'user_edit'],
+                ['貸出・返却', 'lend_process'],
             ],
         };
     },

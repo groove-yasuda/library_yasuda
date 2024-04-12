@@ -1,5 +1,5 @@
 <template>
     <div>
-        <p>全画面ターミナル</p>
+        <p>検索画面</p>
     </div>
 </template>

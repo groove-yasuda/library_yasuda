@@ -1,108 +1,224 @@
 <template>
     <v-app>
-        <v-main>
-            <v-container>
-                <v-icon>mdi-account-plus</v-icon>
-                <p>社員情報登録</p>
-                <p>確認画面</p>
-                <p>以下の内容で登録します。</p>
-                <p>間違いがなければ確認ボタンを押してください</p>
-                <p v-if="error_Message" class="error_Message">{{ error_Message }}</p>
-                <p class="text-center" :style="{'color': 'black'}">社員ID : {{ emp_Id }}</p>
-                <p class="text-center" :style="{'color': 'black'}">社員名 : {{ emp_Name }}</p>
-                <p class="text-center" :style="{'color': 'black'}">生年月日 : {{ birth }}</p>
-                <p class="text-center" :style="{'color': 'black'}">年齢 : {{ age }}</p>
-                <p class="text-center" :style="{'color': 'black'}">性別 : {{ gender }}</p>
-                <p class="text-center" :style="{'color': 'black'}">子供の人数 : {{ child }}</p>
-                <p class="text-center" :style="{'color': 'black'}">住宅手当 : {{ house }}</p>
-                <p class="text-center" :style="{'color': 'black'}">役職 : {{ position }}</p>
-                <p class="text-center" :style="{'color': 'black'}">基本給 : {{ basic_Salary }}円</p>
-                <p class="text-center" :style="{'color': 'black'}">交通費 : {{ transport_Expens }}円</p>
+        <v-navigation-drawer app style="width: 200px;" permanent :clipped="true">
+            <side_Component></side_Component>
+        </v-navigation-drawer>
 
+        <v-main id="mainContent" style="padding: 0;">
+            <v-container class="py-12 px-6" fluid>
+                <p class="login-title">利用者情報</p>
+                <p class="login-title">編集・削除</p>
+                <v-col  class="text-center mt-3"> <!-- 上部からのマージンを追加 -->
+                    <br>
+
+                    <p :style="{ color: numberError ? 'red' : 'white' }" class="error-message">入力できない文字が含まれています</p>
+
+                    <v-row align="center">
+                        <v-col cols="4">
+                            <v-subheader>名前</v-subheader>
+                        </v-col>
+                        <v-col cols="8">
+
+                            <v-text-field label="0123456789" clearable v-model="inputEmpNumber" @input="checkEmpNumber"
+                                counter="10" hint="図書カード番号を入力してください" :rules="[number_Max_Char]" style="width:300px;"
+                                single-line :error="numberError"></v-text-field>
+
+                        </v-col>
+                    </v-row>
+                    <v-row align="center">
+                        <v-col cols="4">
+                            <v-subheader>電話番号</v-subheader>
+                        </v-col>
+                        <v-col cols="8">
+
+                            <v-text-field label="0123456789" clearable v-model="inputEmpNumber" @input="checkEmpNumber"
+                                counter="10" hint="図書カード番号を入力してください" :rules="[number_Max_Char]" style="width:300px;"
+                                single-line :error="numberError"></v-text-field>
+
+                        </v-col>
+                    </v-row>
+                </v-col>
+
+                
+                <v-col  class="text-center mt-3"> <!-- 上部からのマージンを追加 -->
+
+                    <p :style="{ color: numberError ? 'red' : 'white' }" class="error-message">入力できない文字が含まれています</p>
+
+
+                    <v-row align="center">
+                        <v-col cols="4">
+                            <v-subheader>郵便番号</v-subheader>
+                        </v-col>
+                        <v-col cols="8">
+
+                            <v-text-field label="0123456789" clearable v-model="inputEmpNumber" @input="checkEmpNumber"
+                                counter="10" hint="図書カード番号を入力してください" :rules="[number_Max_Char]" style="width:300px;"
+                                single-line :error="numberError"></v-text-field>
+
+                        </v-col>
+                    </v-row>
+                    <v-row align="center">
+                        <v-col cols="4">
+                            <v-subheader>住所：市区町村</v-subheader>
+                        </v-col>
+                        <v-col cols="8">
+
+                            <v-text-field label="0123456789" clearable v-model="inputEmpNumber" @input="checkEmpNumber"
+                                counter="10" hint="図書カード番号を入力してください" :rules="[number_Max_Char]" style="width:300px;"
+                                single-line :error="numberError"></v-text-field>
+
+                        </v-col>
+                    </v-row>
+                    <v-row align="center">
+                        <v-col cols="4">
+                            <v-subheader>住所：番地</v-subheader>
+                        </v-col>
+                        <v-col cols="8">
+
+                            <v-text-field label="0123456789" clearable v-model="inputEmpNumber" @input="checkEmpNumber"
+                                counter="10" hint="図書カード番号を入力してください" :rules="[number_Max_Char]" style="width:300px;"
+                                single-line :error="numberError"></v-text-field>
+
+                        </v-col>
+                    </v-row>
+                </v-col>
+
+                <br><br><br><br><br>
+
+                <v-row class="mt-8 mb-8">
+
+                    <v-col cols="8"></v-col>
+                    <v-col cols="auto">
+                        <v-btn v-on:click="LOGIN" class="btn-same-size" color="black" dark>ログイン</v-btn>
+                    </v-col>
+                    <v-col cols="auto">
+                        <v-btn v-on:click="RETURN" class="btn-same-size" color="black" dark>戻る</v-btn>
+                    </v-col>
+                </v-row>
+
+                <v-dialog v-model="dialog" max-width="1300px" :persistent="true">
+                    <v-card class="d-flex flex-column">
+                        <v-container class="py-12 px-6" fluid>
+                            <v-card-title class="error-message login-title ">エラー</v-card-title>
+                            <v-col cols="12" class="text-center mt-6"></v-col>
+                            <v-card-text class="text-center" style="height:180px">
+                                <p class="error-message caveat-title">{{ error_Message }}</p>
+                            </v-card-text>
+
+                            <v-row class="mt-8 mb-8">
+                                <v-col cols="8"></v-col>
+                                <v-col cols="auto">
+                                    <v-card-actions>
+                                        <v-btn @click="dialog = false" class="btn-same-size" color="black"
+                                            dark>戻る</v-btn>
+                                    </v-card-actions>
+                                </v-col>
+                            </v-row>
+
+                        </v-container>
+                    </v-card>
+                </v-dialog>
 
             </v-container>
-
-            <v-row justify="center">
-                <v-col cols="auto">
-                    <v-btn v-on:click="RETURN">戻る</v-btn>
-                </v-col>
-                <v-col cols="auto">
-                    <v-spacer></v-spacer>
-                </v-col>
-                <v-col cols="auto">
-                    <v-btn v-on:click="CONFI">確認</v-btn>
-                </v-col>
-            </v-row>
-
-
         </v-main>
     </v-app>
 </template>
 
+<style type="text/css">
+p {
+    font-family: 'Century', Times, serif;
+    color: black;
+}
+
+.error-message {
+    color: red;
+}
+
+.login-title {
+    font-size: 24px;
+}
+
+.btn-same-size {
+    width: 80px;
+    height: 40px;
+}
+
+.caveat-title {
+    font-size: 18px;
+}
+
+
+</style>
+
 <script>
-    import axios from 'axios';
-    export default {
-        data() {
-            return {
-                error_Message: '',
-                emp_Id: '', 
-                emp_Name: '',
-                birth: '',
-                age: '',
-                gender: '',
-                child: '',
-                house: '',
-                position: '',
-                basic_Salary: '',
-                transport_Expens:'',
-            };
-        },
-        created() {
+import side_Component from '@/components/sideComponent.vue';
+import axios from 'axios';
 
-            this.emp_Id = this.$route.params.emp_Id;
-            this.emp_Name = this.$route.params.emp_Name;
-            this.birth = this.$route.params.birth;
-            this.age = this.$route.params.age;
-            this.gender = this.$route.params.gender;
-            this.child = this.$route.params.child;
-            this.house = this.$route.params.house;
-            this.position = this.$route.params.position;
-            this.basic_Salary = this.$route.params.basic_Salary;
-            this.transport_Expens = this.$route.params.transport_Expens;
+export default {
+    components: {
+        side_Component
+    },
+    data() {
+        return {
+            inputEmpNumber: '',
+            dialog: false,
+            numberError: false,
+            error_Message: '',
+        };
+    },
+    methods: {
+        checkEmpNumber() {
+            if (/^[0-9]/.test(this.inputEmpNumber) || this.inputEmpNumber == "" || this.inputEmpNumber == null) {
+                this.numberError = false;
+            } else {
+                this.numberError = true;
+            }
         },
-        methods: {
-            RETURN() {
-                this.$router.push({ name: 'ins_Inp' });
-            },
-            CONFI() {
-                axios
-                    .request({
-                        method: 'POST',
-                        url: 'http://localhost:8080/insert_Func',
-                        data: {
-                            id_Over: this.emp_Id,
-                            name_Over: this.emp_Name,
-                            birth: this.birth,
-                            age: this.age,
-                            gender: this.gender,
-                            child: this.child,
-                            house: this.house,
-                            position: this.position,
-                            basic_Salary: this.basic_Salary,
-                            transport_Expens: this.transport_Expens,
-                        }
-                    })
-                    .then((response) => {
-                        if (response.data === true) {
-                            this.$router.push({ name: 'ins_Comp' });
-                        }
-                        else if (response.data === false) {
-                            const error_Message = '入力された社員IDはすでに登録されています。';
-                            this.$router.push({ name: 'ins_Inp', params: { error_Message: error_Message } });
-                        }
+        number_Max_Char(value) {
+            if (value.length <= 10) {
+                return true;
+            } else {
+                return '10字で入力してください';
+            }
+        },
+        LOGIN() {
+            if (this.inputEmpNumber == "" || this.inputEmpNumber == null) {
+                this.dialog = true;
+                this.error_Message = '図書カード番号を入力してください'
+                return;
+            } else {
+                if (/^[0-9]{10}$/.test(this.inputEmpNumber)) {
+                    this.dialog = false;
+                    axios
+                        .request({
+                            method: 'POST',
+                            url: 'http://localhost:8080/numberCheck',
+                            data: {
+                                libraryNumberOver: this.inputEmpNumber,
+                            }
+                        })
+                        .then((response) => {
+                            if (response.data === true) {
+                                this.$router.push({ path: 'user_edit' });
+                            }
+                            else if (response.data === false) {
+                                this.dialog = true;
+                                this.error_Message = '入力された番号は登録されていません。'
+                                return;
 
-                    })
-            },
+                            }
+
+                        })
+                } else {
+                    this.dialog = true;
+                    this.error_Message = '入力された番号は登録されていません。'
+                    return;
+                }
+            }
+        },
+        RETURN() {
+            this.$router.push({ path: 'terminal_user' });//''にrouter.jsで設定したpathを宣言
         }
-    };
+    }
+};
 </script>
