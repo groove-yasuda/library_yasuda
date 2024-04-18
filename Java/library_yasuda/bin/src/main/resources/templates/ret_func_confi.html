@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>書籍貸出画面</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+	<script src="/RET_FUNC.js"></script>
+	<script src="/LEND_RE_TBL.js"></script>
+	
+	<script th:inline="javascript">
+		var availBooksCount = /*[[${key04}]]*/ 0;
+	</script>
+		
+	<script>
+	function CHG(id)
+	{
+ 	   document.No.action = id;
+ 	   document.No.submit();
+    }
+	  
+
+      // ページの読み込みが完了したらテーブルに書籍情報を表示
+      window.onload = function () {
+		  CHK_AVAIL(RE_TBL)
+      };
+
+	
+	</script>
+
+</head>
+<style>
+    .center {
+        text-align: center;
+    }
+</style>
+<body>
+<form action="SEL_FUNC" method="post" name="No">
+    <div style="padding:background-color rgb(255, 255, 255);
+     width:1300px; text-align: center;border: 1px solid rgb(0, 0, 0);">
+        <table align="center" border="1">
+            <tr>
+                <th>図書カード番号</th>
+                <td th:text="${card_Number}"></td>
+                <input type="hidden" name="card_Number" id="card_Number" th:value="${card_Number}" readonly>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </tr>
+            <tr>
+                <th>利用者氏名</th>
+                <td th:text="${user_Name}"></td>
+                <input type="hidden" name="user_Name" id="user_Name" th:value="${user_Name}" readonly>
+            </tr>
+        </table>
+        <br><br>
+
+
+
+        
+        <table id="book_Table" align="center" border="1" width="1200px">
+            <thead>
+            <tr>
+				<th align="center" valign="top" width="100">期限</th>
+                <th align="center" valign="top" width="300">書籍名</th>
+                <th align="center" valign="top" width="200">書籍番号</th>
+                <th align="center" valign="top" width="100">枝番号</th>
+                <th align="center" valign="top" width="200">ジャンル名</th>
+                <th align="center" valign="top" width="100">選択</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- ここに書籍情報が追加されます -->
+            </tbody>
+        </table>
+        <br><br><br><br>
+
+        <input type="hidden" id="list_Send" name="list_Send">
+        <input type="hidden" id="avail_Send" name="avail_Send">
+        <input type="hidden" id="data_Send" name="data_Send">
+        <input type="hidden" id="availBooksCount" name="availBooksCount" th:value="${key04}">
+
+        <input type="button" value="戻る" id="RET_FUNC" onclick="CHG(this.id)" style="width:200px">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="button" value="返却" id="RET_FUNC_CONFI" onclick="CHG(this.id)" style="width:200px" disabled>
+        <br><br>
+    </div>
+</form>
+<br>
+</body>
+</html>
