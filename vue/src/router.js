@@ -28,7 +28,7 @@ const routes = [
     },
     {
         path: '/Terminal_user',
-        name: 'Terminal_User',
+        name: 'terminal_User',
         component: Terminal_User
     },
     {

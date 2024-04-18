@@ -65,7 +65,7 @@ export default {
             return text.replace('利用者登録', '利用者登録<br>');
         },
         HOME(){
-            this.$router.push({ path: 'terminal_home' });//''にrouter.jsで設定したpathを宣言
+            this.$router.push({ name: 'terminal_Home' });//''にrouter.jsで設定したnameを宣言
         },
     }
 };

@@ -1,7 +1,7 @@
 ﻿<template>
     <v-app>
         <v-navigation-drawer app style="width: 200px;" permanent :clipped="true">
-            <side_Component></side_Component>
+            <side_component></side_component>
         </v-navigation-drawer>
 
         <v-main id="mainContent" style="padding: 0;">
@@ -94,12 +94,12 @@ p {
 </style>
 
 <script>
-import side_Component from '@/components/sideComponent.vue';
+import side_component from '@/components/sideComponent.vue';
 import axios from 'axios';
 
 export default {
     components: {
-        side_Component
+        side_component
     },
     data() {
         return {
@@ -125,42 +125,58 @@ export default {
             }
         },
         LOGIN() {
-            if (this.inputEmpNumber == "" || this.inputEmpNumber == null) {
+    if (this.inputEmpNumber == "" || this.inputEmpNumber == null) {
+        this.dialog = true;
+        this.error_Message = '図書カード番号を入力してください'
+        return;
+    } else {
+        if (/^[0-9]{10}$/.test(this.inputEmpNumber)) {
+            this.dialog = false;
+            try {
+                axios
+                    .request({
+                        method: 'POST',
+                        url: 'http://localhost:8080/numberCheck',
+                        data: {
+                            libraryNumberOver: this.inputEmpNumber,
+                        }
+                    })
+                    .then((response) => {
+                        if (response.data === true) {
+                            console.log(this.inputEmpNumber);
+
+                            this.$router.push({
+                                name: 'user_Edit' , params: {
+                                libraryNumber: this.inputEmpNumber
+                                }
+                            });
+
+
+                        } else if (response.data === false) {
+                            this.dialog = true;
+                            this.error_Message = '入力された番号は登録されていません。';
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('An error occurred:', error);
+                        this.dialog = true;
+                        this.error_Message = 'システムエラーが発生しました。係員にお知らせください';
+                    });
+            } catch (error) {
+                console.error('An error occurred:', error);
                 this.dialog = true;
-                this.error_Message = '図書カード番号を入力してください'
-                return;
-            } else {
-                if (/^[0-9]{10}$/.test(this.inputEmpNumber)) {
-                    this.dialog = false;
-                    axios
-                        .request({
-                            method: 'POST',
-                            url: 'http://localhost:8080/numberCheck',
-                            data: {
-                                libraryNumberOver: this.inputEmpNumber,
-                            }
-                        })
-                        .then((response) => {
-                            if (response.data === true) {
-                                this.$router.push({ path: 'user_edit' });
-                            }
-                            else if (response.data === false) {
-                                this.dialog = true;
-                                this.error_Message = '入力された番号は登録されていません。'
-                                return;
-
-                            }
-
-                        })
-                } else {
-                    this.dialog = true;
-                    this.error_Message = '入力された番号は登録されていません。'
-                    return;
-                }
+                this.error_Message = 'システムエラーが発生しました。係員にお知らせください';
             }
-        },
+        } else {
+            this.dialog = true;
+            this.error_Message = '入力された番号は登録されていません。';
+            return;
+        }
+    }
+},
+
         RETURN() {
-            this.$router.push({ path: 'terminal_user' });//''にrouter.jsで設定したpathを宣言
+            this.$router.push({ name: 'terminal_User' });//''にrouter.jsで設定したpathを宣言
         }
     }
 };
