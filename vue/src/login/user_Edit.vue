@@ -85,7 +85,7 @@
                         <v-col cols="8">
 
                             <v-text-field label="新宿区西新宿" clearable v-model="inputMunicipalities" style="width:300px;"
-                                single-line :error="numberError"></v-text-field>
+                            :rules="[checkInput]" single-line :error="numberError"></v-text-field>
 
                         </v-col>
                     </v-row>
@@ -97,7 +97,7 @@
                         <v-col cols="8">
 
                             <v-text-field label="0-0-0" clearable v-model="inputStreetAddress" style="width:300px;"
-                                single-line :error="numberError"></v-text-field>
+                            :rules="[checkStreetAddress]" single-line :error="numberError"></v-text-field>
 
                         </v-col>
                     </v-row>
@@ -157,9 +157,9 @@
                     </v-card>
                 </v-dialog>
 
-                <v-dialog v-model="registPopup" max-width="600px">
+                <v-dialog v-model="registPopup" max-width="600px" :persistent="true">
                     <v-card align="center">
-                        <v-card-title>登録内容確認</v-card-title>
+                        <v-card-title>更新内容確認</v-card-title>
                         <v-card-text>
                             <p>名前: {{ inputName }}</p>
                             <p>電話番号: {{ inputPhoneNumber }}</p>
@@ -177,7 +177,7 @@
                                     <v-btn @click="REGIST" color="black" dark>更新</v-btn>
                                 </v-col>
                                 <v-col cols="auto">
-                                    <v-btn @click="registPopup = false" color="black" dark>編集</v-btn>
+                                    <v-btn @click="registPopup = false" color="black" dark>戻る</v-btn>
                                 </v-col>
                             </v-row>
                         </v-card-actions>
@@ -266,7 +266,7 @@ p {
 </style>
 
 <script>
-import side_component from '@/components/sideComponent.vue';
+import side_component from '@/components/side_component.vue';
 import axios from 'axios';
 
 export default {
@@ -326,8 +326,6 @@ export default {
 
                             n = n + 1;
                         }
-
-                        console.log(this.prefectures[1]);
 
 
                     } else {
@@ -417,7 +415,9 @@ export default {
             }
         },
         maxChar(value) {
-            if (value.length <= 64) {
+            if (value == ''  || value === null) {
+                return false;
+            } else if(value.length <= 64){
                 return true;
             } else {
                 return '64字以内で入力してください';
@@ -442,15 +442,24 @@ export default {
             }
         },
         checkInput(value) {
-            if (value.length === 0 || /^[ぁ-んァ-ン一-龠a-zA-Z]+$/.test(value)) {
+            if (value == '' || value == null) {
+                return false;
+            } else if(/^[ぁ-んァ-ン一-龠a-zA-Z]+$/.test(value)){
                 return true;
             } else {
                 return '入力できない文字が含まれています。';
             }
         },
+        checkStreetAddress(value) {
+            if(value == '' || value == null){
+                return false;
+            } else {
+                return true;
+            }
+        },
         phoneNumberMaxChar(value) {
             if (!value) { // 値が空の場合
-                return true;
+                return false;
             } else if (/^(0120|010|020|030|040|050|060)/.test(value)) {
                 return '規程の入力ではありません。';
             } else if (!/^\d+$/.test(value)) {
@@ -469,23 +478,31 @@ export default {
         },
         inputAll() {
             const isValidName = this.checkInput(this.inputName) === true;
+            const isValidNameChar = this.maxChar(this.inputName) === true;
             const isValidPhoneNumber = this.phoneNumberMaxChar(this.inputPhoneNumber) === true;
-            const isValidStreetAddress = this.inputStreetAddress.length > 0;
+            const isValidMunicipalities = this.checkInput(this.inputMunicipalities) === true;
+            const isValidStreetAddress = this.checkStreetAddress(this.inputStreetAddress) === true;
+
+            console.log(isValidName);
+            console.log(isValidNameChar);
+            console.log(isValidPhoneNumber);
+            console.log(isValidStreetAddress);
+            console.log(isValidMunicipalities);
+            console.log('OK');
 
 
-            if (isValidName && isValidPhoneNumber && isValidStreetAddress) {
+            if (isValidName && isValidPhoneNumber && isValidStreetAddress && isValidNameChar && isValidMunicipalities) {
                 this.buttonEnabled = true;
             } else {
                 this.buttonEnabled = false;
             }
         },
         differenceCheck() {
-            if(this.storageName == this.inputName || this.storagePhoneNumber == this.inputPphone_number ||
-                this.storageMunicipalities == this.inputMunicipalities || this.storageStreetAddress == this.inputStreetAddress)
+            
+            if(this.storageName == this.inputName && this.storagePhoneNumber == this.inputPhoneNumber &&
+                this.storageMunicipalities == this.inputMunicipalities && this.storageStreetAddress == this.inputStreetAddress)
                 {
                     this.buttonEnabled = false;
-                } else {
-                    this.buttonEnabled = true;
                 }
         },
         REGIST() {
@@ -566,7 +583,6 @@ export default {
             }
         },
         SEARCH() {
-            console.log(this.inputPostCode);
             try {
                 axios
                     .request({
@@ -579,7 +595,6 @@ export default {
                     .then((response) => {
                         if (response.data) {
                             const addressData = response.data.results[0]
-                            console.log(addressData.address1)
                             this.prefectureId = addressData.prefcode;//都道府県番号
                             this.inputMunicipalities = addressData.address2 + addressData.address3; //市区町村
                             this.selectedPrefecture = addressData.address1;

@@ -94,7 +94,7 @@ p {
 </style>
 
 <script>
-import side_component from '@/components/sideComponent.vue';
+import side_component from '@/components/side_component.vue';
 import axios from 'axios';
 
 export default {
